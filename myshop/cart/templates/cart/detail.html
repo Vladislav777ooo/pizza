@@ -1,0 +1,41 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block title %}
+    Your shopping cart
+{% endblock %}
+{% block content %}
+    <table class="cart" id="cart">
+        <thead>
+        </thead>
+        <tbody>
+        {% for item in cart %}
+            {% with product=item.product %}
+            <div id="main" class="product-list">
+            
+                <div class="item">
+                    <img src="{% if product.image %}{{ product.image.url }}{% else %}{% static "img/no_image.png" %}{% endif %}">
+                    <p><a href="{{ product.get_absolute_url }}">{{ product.name }}</a><br><br>{{ item.total_price }} ₽</p>
+                    <p><form action="{% url "cart:cart_add" product.id %}"method="post">{{ item.update_quantity_form.quantity }}{{ item.update_quantity_form.update }}
+                        <input type="submit" value="Обновить">
+                        {% csrf_token %}
+                    </form>
+                    <a href="{% url "cart:cart_remove" product.id%}">Убрать товар</a></p>
+                </div>
+            </div>
+                
+            {% endwith %}
+        {% endfor %}
+        <tr class="total">
+            <td>Итоговая цена покупки</td>
+            <td colspan="4"></td>
+            <td class="num">{{ cart.get_total_price }} ₽</td>
+        </tr>
+        </tbody>
+    </table>
+    <br><br><br>
+    <p class="text-right">
+        <a href="{% url "shop:product_list" %}" class="button">Продолжить покупки</a> 
+        <a href="{% url "orders:order_create" %}" class="button" type="submit">Перейти к оформлению</a>
+    </p>
+    <script>window.screen.lockOrientation('portrait');</script>
+{% endblock %}
